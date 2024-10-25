@@ -66,6 +66,18 @@ public class Player : MonoBehaviour
         UpdateLifeDisplayerText();
     }
 
+    public void Heal(int health)
+    {
+        currentHealth += health;
+
+        if (currentHealth > 100)
+        {
+            currentHealth = 100;
+        }
+
+        UpdateLifeDisplayerText();
+    }
+
     private IEnumerator DamagePerSeconds()
     {
         WaitForSeconds wait = new WaitForSeconds(1f);
