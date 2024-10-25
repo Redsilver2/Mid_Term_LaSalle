@@ -8,6 +8,9 @@ public class Spike : MonoBehaviour
     private const int DAMAGE_AMOUNT = 20;
 
     private bool isMoving = false;
+    private IEnumerator moveCoroutine;
+
+    public bool IsMoving => isMoving;
 
     private void Start()
     {
@@ -19,14 +22,26 @@ public class Spike : MonoBehaviour
         this.ownerSpikeGenerator = ownerSpikeGenerator;
     }
 
-    public IEnumerator Move()
+    public void Move()
+    {   
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        isMoving = true;
+
+        moveCoroutine = MoveCoroutine();
+        StartCoroutine(moveCoroutine);
+    }
+
+    public IEnumerator MoveCoroutine()
     {
         if(ownerSpikeGenerator != null)
         {
-            transform.localPosition = ownerSpikeGenerator.SpikeSpawnPosition;
             isMoving = true;
 
-            while (transform.localPosition.x >= ownerSpikeGenerator.MaxSpikeXPosition && isMoving)
+            while (transform.localPosition.y > ownerSpikeGenerator.MaxSpikeYPosition && isMoving)
             {
                 transform.localPosition += Vector3.down * ownerSpikeGenerator.SpikeSpeed * Time.deltaTime; 
                 yield return null;
@@ -48,6 +63,16 @@ public class Spike : MonoBehaviour
             {
                 ownerSpikeGenerator.ReturnSpikeToPool(this);
             }
+        }
+    }
+
+    private void OnDisable()
+    {
+        isMoving = false;
+
+        if (ownerSpikeGenerator != null)
+        {
+            ownerSpikeGenerator.ReturnSpikeToPool(this);
         }
     }
 }

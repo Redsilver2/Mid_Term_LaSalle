@@ -2,7 +2,10 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 public class Player : MonoBehaviour
@@ -17,13 +20,22 @@ public class Player : MonoBehaviour
     private int currentHealth = 100;
     private IEnumerator damagePerSecondsCoroutine;
 
+    private Animator animator;
+    private SpriteRenderer _renderer;
+
 
     private Rigidbody2D _rigidbody;
     private float axisX = 0f;
+    private float axisXRaw;
 
     private void Start()
     {
+        animator   = GetComponent<Animator>();
+        _renderer  = GetComponent<SpriteRenderer>();
         _rigidbody = GetComponent<Rigidbody2D>();
+
+        _rigidbody.freezeRotation = true;
+
         UpdateLifeDisplayerText();
 
         damagePerSecondsCoroutine = DamagePerSeconds();
@@ -33,7 +45,18 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        axisXRaw = Input.GetAxisRaw("Horizontal");
         axisX = Input.GetAxis("Horizontal") * movementSpeed * Time.deltaTime;
+        
+        if(axisXRaw == 1f || axisXRaw == -1f)
+        {    
+            _renderer.flipX = axisXRaw == 1f ? false : true;
+            animator.SetBool("IsRunning", true);
+        }
+        else
+        {
+            animator.SetBool("IsRunning", false);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -43,7 +66,10 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position += Vector3.right * axisX;
+        if (axisXRaw != 0f)
+        {
+            transform.position += Vector3.right * axisX;
+        }
     }
 
     private void UpdateLifeDisplayerText()
@@ -88,5 +114,10 @@ public class Player : MonoBehaviour
             Damage(1);
             yield return null;
         }
+    }
+
+    private void OnDisable()
+    {
+        animator.SetBool("IsRunning", false);
     }
 }

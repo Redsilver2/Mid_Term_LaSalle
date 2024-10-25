@@ -13,13 +13,12 @@ public class SpikeGenerator : MonoBehaviour
 
     [Space]
     [SerializeField] private Vector3 spikeSpawnPosition;
-    [SerializeField] private float maxSpikeXPosition;
+    [SerializeField] private float maxSpikeYPosition;
 
     private List<Spike> spikesPool;
 
     public float SpikeSpeed => spikeSpeed;
-    public Vector3 SpikeSpawnPosition => spikeSpawnPosition;
-    public float MaxSpikeXPosition => maxSpikeXPosition;
+    public float MaxSpikeYPosition => maxSpikeYPosition;
 
     private void Start()
     {
@@ -43,11 +42,11 @@ public class SpikeGenerator : MonoBehaviour
         if (!spikesPool.Contains(spike) && spike != null)
         {
             Transform transform = spike.transform;
+            spikesPool.Add(spike);
 
-            spike.gameObject.SetActive(false);
             transform.SetParent(this.transform);
             transform.localPosition = Vector3.up * -100f;
-            spikesPool.Add(spike);
+            spike.gameObject.SetActive(false);
         }
     }
 
@@ -60,10 +59,11 @@ public class SpikeGenerator : MonoBehaviour
             if (spikesPool.Count > 0 && t >= spawnTime)
             {
                 Spike spike = spikesPool[0];
-                spikesPool.RemoveAt(0);
+                spikesPool.Remove(spike);
 
                 spike.gameObject.SetActive(true);
-                StartCoroutine(spike.Move());
+                spike.transform.localPosition = spikeSpawnPosition;
+                spike.Move();
                 t = 0f;
             }
             else

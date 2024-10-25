@@ -67,6 +67,19 @@ public class OxygeneBox : MonoBehaviour
             }
         }
     }
+
+    private void OnDisable()
+    {
+        if (healPlayerPerSecond != null)
+        {
+            StopCoroutine(healPlayerPerSecond);
+        }
+
+        if (updateLineRenderer != null)
+        {
+            StopCoroutine(updateLineRenderer);
+        }
+    }
 }
 
 

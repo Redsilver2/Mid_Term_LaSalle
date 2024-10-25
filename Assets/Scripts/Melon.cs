@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(Animator))]
 public class Melon : MonoBehaviour
 {
     private const int HEAL_AMOUNT = 20;
