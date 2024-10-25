@@ -17,6 +17,10 @@ public class SpikeGenerator : MonoBehaviour
 
     private List<Spike> spikesPool;
 
+    public float SpikeSpeed => spikeSpeed;
+    public Vector3 SpikeSpawnPosition => spikeSpawnPosition;
+    public float MaxSpikeXPosition => maxSpikeXPosition;
+
     private void Start()
     {
         spikesPool  = new List<Spike>();
@@ -26,6 +30,7 @@ public class SpikeGenerator : MonoBehaviour
             for (int i = 0; i < maxAmountOfSpikes; i++)
             {
                 Spike spike = Instantiate(spikePrefab);
+                spike.SetOwnerSpikeGenerator(this); 
                 ReturnSpikeToPool(spike);
             }
 
@@ -41,7 +46,7 @@ public class SpikeGenerator : MonoBehaviour
 
             spike.gameObject.SetActive(false);
             transform.SetParent(this.transform);
-            transform.localPosition = Vector3.zero;
+            transform.localPosition = Vector3.up * -100f;
             spikesPool.Add(spike);
         }
     }
@@ -56,10 +61,16 @@ public class SpikeGenerator : MonoBehaviour
             {
                 Spike spike = spikesPool[0];
                 spikesPool.RemoveAt(0);
+
+                spike.gameObject.SetActive(true);
+                StartCoroutine(spike.Move());
                 t = 0f;
             }
+            else
+            {
+                t += Time.deltaTime;
+            }
 
-            t += Time.deltaTime;
             yield return null;
         }
     }
