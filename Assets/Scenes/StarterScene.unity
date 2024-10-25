@@ -521,7 +521,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 5
-  jumpForce: 100
+  jumpForce: 500
+  lifeDisplayer: {fileID: 0}
 --- !u!61 &1023038001
 BoxCollider2D:
   m_ObjectHideFlags: 0
