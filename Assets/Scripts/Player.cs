@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -56,6 +57,12 @@ public class Player : MonoBehaviour
     public void Damage(int damage)
     {
         currentHealth -= damage;
+
+        if (currentHealth < 0)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+
         UpdateLifeDisplayerText();
     }
 
@@ -67,14 +74,7 @@ public class Player : MonoBehaviour
         {
             yield return wait;
             Damage(1);
-        }
-    }
-
-    private void OnDisable()
-    {
-        if(damagePerSecondsCoroutine != null)
-        {
-            StopCoroutine(damagePerSecondsCoroutine);
+            yield return null;
         }
     }
 }
